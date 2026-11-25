@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAI REN 智能简历筛选报告 — 风格三：柔彩粘土 × 液态玻璃风</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+@font-face {
+  font-family: "TencentSans";
+  src: local("腾讯体 W7"), local("腾讯体W7"), local("腾讯体"), local("TencentSans W7"), local("TencentSansW7"), local("TencentSans-W7"), local("TencentSans");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3, .report-title, .detail-name, .score-num, .cand-score, .cand-rank, .detail-rank, .tab-badge, .weight-pill {
+  font-family: "Nunito", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* Background Stage & TAI REN Tencent Font */
+.bg-stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.brand-watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10vh;
+  user-select: none;
+}
+
+.brand-sub {
+  position: fixed;
+  top: 150px;
+  left: 50%;
+  transform: translate(-50%, -50%) skewX(-10deg);
+  font-family: "TencentSans", "Nunito", sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.28em;
+  font-weight: 900;
+  font-style: italic;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.brand-title {
+  font-family: "TencentSans", "Nunito", sans-serif;
+  font-size: clamp(6rem, 17.5vw, 17.5rem);
+  font-weight: 900;
+  font-style: italic;
+  transform: skewX(-10deg);
+  letter-spacing: 0.02em;
+  padding-right: 0.14em;
+  line-height: 0.92;
+  white-space: nowrap;
+}
+
+/* App Shell */
+.app-shell {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 20px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: gap 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.app-shell.is-compact {
+  gap: 28px;
+}
+@media (min-width: 1025px) {
+  .app-shell {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+/* User's Exact Glassmorphism Core */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px) saturate(181%);
+  -webkit-backdrop-filter: blur(20px) saturate(181%);
+  border-radius: 37px;
+  border: 0px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+}
+
+/* Topbar */
+.topbar {
+  position: relative;
+  z-index: 30;
+  padding: 22px 30px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: padding 0.34s cubic-bezier(0.22, 1, 0.36, 1), gap 0.34s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topbar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-family: "Nunito", "TencentSans", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  max-height: 24px;
+  overflow: hidden;
+  transition: max-height 0.28s ease, opacity 0.22s ease, margin 0.28s ease;
+}
+
+.report-title {
+  font-size: clamp(1.4rem, 2.3vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+  transition: font-size 0.34s cubic-bezier(0.22, 1, 0.36, 1), margin 0.34s ease;
+}
+
+.report-meta {
+  font-size: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  max-height: 44px;
+  overflow: hidden;
+  transition: max-height 0.28s ease, opacity 0.22s ease;
+}
+.report-meta b { font-weight: 700; }
+.dot-sep { opacity: 0.45; }
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 18px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.action-btn svg { width: 17px; height: 17px; }
+
+/* Compact Topbar State on Scroll */
+.app-shell.is-compact .topbar {
+  padding: 12px 26px 12px;
+  gap: 10px;
+  border-radius: 28px;
+}
+.app-shell.is-compact .eyebrow {
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+}
+.app-shell.is-compact .report-title {
+  font-size: 1.15rem;
+  margin-bottom: 0;
+}
+.app-shell.is-compact .report-meta {
+  max-height: 0;
+  opacity: 0;
+}
+.app-shell.is-compact .action-btn {
+  padding: 7px 14px;
+  font-size: 0.84rem;
+  border-radius: 14px;
+}
+.app-shell.is-compact .filter-tabs {
+  padding: 4px;
+}
+.app-shell.is-compact .filter-tab {
+  padding: 6px 13px;
+  font-size: 0.86rem;
+}
+.app-shell.is-compact .search-wrap input,
+.app-shell.is-compact .sort-select {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-size: 0.86rem;
+}
+
+/* Criteria Drawer */
+.criteria-drawer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  opacity: 0;
+}
+.criteria-drawer.open {
+  max-height: 700px;
+  opacity: 1;
+}
+.criteria-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--inner-border);
+}
+.criteria-col-title {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.criteria-list, .criteria-weights {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.criteria-list li {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--subcard-bg);
+}
+.criteria-weights li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--subcard-bg);
+}
+.weight-pill {
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* Controls Row */
+.topbar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 20px;
+  background: var(--subcard-bg);
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border-radius: 15px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tab-badge {
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+
+.control-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 260px;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* Custom Clay-Glass Sort Dropdown */
+.sort-dropdown {
+  position: relative;
+}
+.sort-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 164px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: #524C5E;
+  box-shadow: inset 3px 3px 8px rgba(160, 150, 190, 0.15), inset -3px -3px 8px rgba(255, 255, 255, 0.9);
+}
+.sort-trigger svg {
+  width: 15px;
+  height: 15px;
+  opacity: 0.65;
+  transition: transform 0.22s ease;
+}
+.sort-dropdown.open .sort-trigger svg {
+  transform: rotate(180deg);
+}
+.app-shell.is-compact .sort-trigger {
+  padding: 7px 14px;
+  font-size: 0.86rem;
+}
+.sort-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 100%;
+  padding: 5px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12), inset 2px 2px 6px rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 50;
+}
+.sort-dropdown.open .sort-menu {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.sort-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 11px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #524C5E;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+.sort-option:hover {
+  background: rgba(237, 233, 254, 0.55);
+  color: #6D28D9;
+}
+.sort-option.active {
+  background: #EDE9FE;
+  color: #5B21B6;
+  font-weight: 700;
+}
+.sort-option svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Master-Detail Workspace */
+.workspace {
+  display: grid;
+  grid-template-columns: 390px minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+.list-pane, .detail-pane {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.pane-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.list-pane .pane-scroll {
+  margin: 14px 10px 14px 0;
+  padding: 14px 10px 18px 18px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22px, #000 calc(100% - 22px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 22px, #000 calc(100% - 22px), transparent 100%);
+}
+
+.detail-pane .pane-scroll {
+  margin: 16px 12px 16px 0;
+  padding: 14px 24px 18px 36px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 18px, #000 calc(100% - 18px), transparent 100%);
+}
+
+.cand-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cand-item {
+  padding: 16px 18px;
+  border-radius: 22px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: var(--subcard-bg);
+}
+
+.cand-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cand-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.cand-rank {
+  font-size: 0.85rem;
+  font-weight: 800;
+  opacity: 0.65;
+}
+
+.cand-name {
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.cand-score {
+  font-size: 1.05rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.cand-item-meta {
+  font-size: 0.84rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+  opacity: 0.82;
+}
+
+.cand-item-snippet {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  opacity: 0.88;
+}
+
+/* Status Pills */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-family: "Nunito", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+/* Right Detail Pane */
+.detail-pane {
+  min-height: 0;
+}
+
+.detail-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.detail-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.detail-rank {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.detail-name {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.detail-basics {
+  font-size: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+}
+
+.detail-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 14px 18px;
+  border-radius: 24px;
+  flex-shrink: 0;
+}
+.score-num {
+  font-size: 2.1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.score-label {
+  font-size: 0.74rem;
+  margin-top: 4px;
+  opacity: 0.85;
+}
+
+.detail-meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: var(--subcard-bg);
+}
+
+.file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  opacity: 0.85;
+}
+.file-chip svg { width: 16px; height: 16px; flex-shrink: 0; }
+.file-chip span { font-family: "SF Mono", Consolas, monospace; word-break: break-all; }
+
+.contact-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.contact-text { font-size: 0.9rem; font-weight: 500; }
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.copy-btn svg { width: 14px; height: 14px; }
+
+.detail-summary-card {
+  padding: 20px 24px;
+  border-radius: 22px;
+  background: var(--subcard-bg);
+}
+
+.section-heading {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.summary-text {
+  font-size: 1.06rem;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+/* Insights Grid */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.insight-box {
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: var(--subcard-bg);
+}
+.insight-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: "Nunito", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.insight-title svg { width: 17px; height: 17px; }
+.insight-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+.insight-box li {
+  position: relative;
+  padding-left: 14px;
+}
+.insight-box li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+/* Dimensions */
+.dim-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dim-card {
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: var(--subcard-bg);
+}
+.dim-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.dim-name {
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.dim-score-pill {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.dim-bar-track {
+  height: 7px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: var(--track-bg);
+}
+.dim-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.dim-note-text {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.65;
+  opacity: 0.9;
+}
+
+/* Evidence */
+.evidence-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.evidence-chip {
+  padding: 9px 14px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  background: var(--subcard-bg);
+}
+
+/* Abnormal & Empty */
+.empty-panel, .abnormal-panel {
+  padding: 40px 32px;
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  opacity: 0.7;
+  font-size: 1rem;
+}
+.empty-state svg { width: 42px; height: 42px; margin-bottom: 12px; }
+
+/* Scrollbar */
+.pane-scroll::-webkit-scrollbar { width: 6px; }
+.pane-scroll::-webkit-scrollbar-track { background: transparent; }
+.pane-scroll::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(124, 58, 237, 0.22); }
+.pane-scroll::-webkit-scrollbar-thumb:hover { background: rgba(124, 58, 237, 0.38); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .workspace { grid-template-columns: 1fr; }
+  .list-pane { max-height: 420px; }
+  .detail-pane { height: auto; }
+  .criteria-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .app-shell { padding: 14px 14px 36px; }
+  .topbar, .detail-pane { padding: 20px; border-radius: 26px; }
+  .glass-panel { border-radius: 26px; }
+  .detail-header { flex-direction: column; }
+}
+
+@media print {
+  .bg-stage, .topbar-actions, .topbar-controls, .list-pane, .copy-btn, .toast { display: none !important; }
+  body { background: #fff !important; color: #111 !important; }
+  .glass-panel { background: #fff !important; box-shadow: none !important; backdrop-filter: none !important; border: 1px solid #ddd !important; border-radius: 12px !important; }
+  .workspace { display: block; }
+}
+
+
+/* 风格三：柔彩粘土 × 液态玻璃风 (Clay-Glass Hybrid) */
+:root {
+  --text-main: #2E293A;
+  --text-muted: #5E586B;
+  --subcard-bg: rgba(255, 255, 255, 0.56);
+  --inner-border: rgba(124, 58, 237, 0.12);
+  --track-bg: rgba(124, 58, 237, 0.1);
+  --accent-green: #10B981;
+  --accent-amber: #F59E0B;
+  --accent-gray: #94A3B8;
+  --clay-shadow: 8px 8px 18px rgba(150, 140, 180, 0.18), -6px -6px 14px rgba(255, 255, 255, 0.85), inset 3px 3px 6px rgba(255, 255, 255, 0.7);
+}
+
+body {
+  background: linear-gradient(135deg, #EFEBF8 0%, #F4F1FA 50%, #EAF2FA 100%);
+  color: var(--text-main);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.55;
+  animation: floatOrb 12s ease-in-out infinite;
+}
+.orb-1 { width: 46vw; height: 46vw; background: #A78BFA; top: -12%; left: -10%; opacity: 0.42; }
+.orb-2 { width: 34vw; height: 34vw; background: #FBCFE8; top: 20%; right: -8%; opacity: 0.28; animation-delay: -4s; }
+.orb-3 { width: 44vw; height: 44vw; background: #38BDF8; bottom: -14%; left: 18%; opacity: 0.48; animation-delay: -7s; }
+.orb-4 { width: 32vw; height: 32vw; background: #34D399; bottom: 8%; right: 14%; opacity: 0.36; }
+
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-22px) rotate(3deg); }
+}
+
+.brand-sub {
+  color: rgba(91, 33, 182, 0.18);
+  text-shadow: 0 0 24px rgba(139, 92, 246, 0.16);
+}
+.brand-title {
+  color: rgba(91, 33, 182, 0.13);
+  text-shadow: 0 0 42px rgba(139, 92, 246, 0.16);
+}
+
+.eyebrow { color: #6D28D9; }
+.report-meta { color: var(--text-muted); }
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.72);
+  color: #332F3A;
+  border: none;
+  box-shadow: var(--clay-shadow);
+}
+.action-btn:hover, .action-btn.active {
+  background: #EDE9FE;
+  color: #5B21B6;
+  box-shadow: 6px 6px 14px rgba(124, 58, 237, 0.14), -4px -4px 10px rgba(255, 255, 255, 0.95);
+}
+
+.filter-tab { color: #524C5E; }
+.filter-tab:hover { color: #6D28D9; background: rgba(237, 233, 254, 0.55); }
+.filter-tab.active {
+  background: #EDE9FE;
+  color: #5B21B6;
+  font-weight: 700;
+  box-shadow: 5px 5px 12px rgba(124, 58, 237, 0.14), -4px -4px 10px rgba(255, 255, 255, 0.9), inset 2px 2px 4px rgba(255, 255, 255, 0.75);
+}
+.tab-badge { background: rgba(82, 76, 94, 0.09); color: #524C5E; }
+.filter-tab.active .tab-badge { background: rgba(91, 33, 182, 0.12); color: #5B21B6; }
+
+.search-wrap svg { color: #7C3AED; opacity: 0.65; }
+.search-wrap input, .sort-select {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #2E293A;
+  box-shadow: inset 3px 3px 8px rgba(160, 150, 190, 0.15), inset -3px -3px 8px rgba(255, 255, 255, 0.9);
+}
+.search-wrap input::placeholder { color: #7E778C; }
+
+.cand-item {
+  box-shadow: 6px 6px 14px rgba(160, 150, 185, 0.12), -4px -4px 10px rgba(255, 255, 255, 0.65);
+}
+.cand-item:hover {
+  background: rgba(255, 255, 255, 0.78);
+  transform: translateY(-2px);
+}
+.cand-item.active {
+  background: rgba(255, 255, 255, 0.94);
+  border: none;
+  box-shadow: 12px 12px 26px rgba(139, 92, 246, 0.20), -6px -6px 14px rgba(255, 255, 255, 0.96);
+}
+
+.badge-recommended { background: #D1FAE5; color: #047857; box-shadow: inset 2px 2px 4px rgba(255,255,255,0.6); }
+.badge-pending { background: #FEF3C7; color: #B45309; box-shadow: inset 2px 2px 4px rgba(255,255,255,0.6); }
+.badge-rejected { background: #E2E8F0; color: #475569; }
+
+.score-green { background: linear-gradient(145deg, #ECFDF5, #D1FAE5); color: #047857; box-shadow: var(--clay-shadow); }
+.score-amber { background: linear-gradient(145deg, #FFFBEB, #FEF3C7); color: #B45309; box-shadow: var(--clay-shadow); }
+.score-gray { background: linear-gradient(145deg, #F8FAFC, #E2E8F0); color: #475569; box-shadow: var(--clay-shadow); }
+
+.detail-rank { color: #0284C7; }
+.detail-basics { color: var(--text-muted); }
+.copy-btn {
+  background: #E0F2FE;
+  color: #0369A1;
+  border: none;
+  box-shadow: 4px 4px 10px rgba(14, 165, 233, 0.14), -3px -3px 8px rgba(255, 255, 255, 0.85), inset 2px 2px 4px rgba(255, 255, 255, 0.7);
+}
+.copy-btn:hover {
+  background: #BAE6FD;
+  color: #075985;
+}
+.copy-btn.copied {
+  background: #DCFCE7;
+  color: #047857;
+  box-shadow: 4px 4px 10px rgba(16, 185, 129, 0.14), -3px -3px 8px rgba(255, 255, 255, 0.85);
+}
+
+.insight-box, .dim-card, .detail-summary-card, .evidence-chip {
+  box-shadow: 6px 6px 16px rgba(160, 150, 185, 0.12), -4px -4px 12px rgba(255, 255, 255, 0.7);
+}
+
+.insight-green .insight-title { color: #059669; }
+.insight-amber .insight-title { color: #D97706; }
+.insight-gray .insight-title { color: #5E586B; }
+
+.dim-score-pill { background: #E0F2FE; color: #0369A1; }
+.weight-pill { background: #E0F2FE; color: #0369A1; }
+.toast {
+  background: rgba(220, 252, 231, 0.86);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  color: #047857;
+  border: 1px solid rgba(167, 243, 208, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 14px 32px rgba(16, 185, 129, 0.16), inset 2px 2px 6px rgba(255, 255, 255, 0.8);
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg-stage" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="brand-watermark">
+    <span class="brand-sub">TAI REN RESUME SCREENER</span>
+    <span class="brand-title">TAI REN</span>
+  </div>
+</div>
+
+<div class="app-shell" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const REPORT_DATA = {"meta":{"job_title":"资深软件开发工程师（上海 11-18K）","screening_time":"2026-11-25T09:07+08:00","total_files_scanned":10,"valid_parsed":10,"source_summary":"本地收件目录：input"},"criteria":{"hard_requirements":["本科及以上学历、计算机相关专业；仅当原文明示最高学历低于本科时判不符，专业相近（软件工程、电子信息、自动化等）视为满足","3-5 年 Python/Java 等后端开发经验；仅当原文明示后端开发不足 3 年或明示从未做后端开发时判不符，超过 5 年不判不符","求职意向为本岗位；仅当本人明示只投其他岗位或不考虑本岗时判不符"],"hidden_requirements":["HR 确认：本批仅评投递本岗的 10 份简历，其余 8 份非本岗投递不参与排名","HR 确认：制造业经验与深入研究 RAG 分别计入 D3、D2 权重，不升为硬门槛，不因简历未提及而淘汰","HR 确认：计算机相关专业含相近专业；3-5 年不因超上限淘汰","HR 确认：上海、11-18K 及学习能力、沟通、责任心、抗压等软性要求不作硬门槛，仅供复核"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","weight":20},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","weight":30},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","weight":20},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","weight":20},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","weight":10}]},"candidates":[{"name":"王 雯 龙","phone":"15236340243","email":"15236340243@163.com","years":3,"education":"数据科学与大数据技术（本科）","latest_role":"大模型开发工程师","status":"recommended","score":95.0,"filename":"【资深软件开发工程师_上海 11-18K】王雯龙 3年.pdf","comment":"唯一有制造业设备运维与生产制造场景的候选人，RAG 全链路、多 Agent 编排、企业文档治理与 MES/SAP 集成均有量化成果，与岗位最贴合。","highlights":["金风科技的设备运维、备件管理与生产制造业务线 AI 平台由本人负责 RAG 与多 Agent 引擎。","RAGAS 四项指标与 40+ 并发压测、答案 chunk ID 溯源齐备。","企业文档治理把重复率由 31% 降至 4%，并接入 MES/SAP/工单。"],"risks":["偏 AI 平台与数据治理，简历未提及 Java/Golang 传统后端架构主导经历。"],"gaps":["简历未提及排产场景与工业机理模型结合方式，需面试核实。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":75,"note":"FastAPI 服务层与 SQL/MySQL/PostgreSQL 有落地，主力职责仍是 AI 链路而非后端架构。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"RAG 全链路、多 Agent 编排与 RAGAS 四项指标均有数据，40+ 并发压测与私有化部署齐备。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":100,"note":"在制造企业服务设备运维与生产制造业务线，另有 52 万份企业文档治理成果。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":100,"note":"Docker/Kubernetes 部署、MySQL/PostgreSQL/Redis、全链路 Trace 与 40+ 并发压测均有实践。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":100,"note":"把 MES、SAP、工单、邮件封装为 MCP 标准工具，企业系统集成程度最高。"}],"evidence":["数据科学与大数据技术（本科）","工作年限：3 年","求职意向：大模型应用开发工程师","服务层由 FastAPI 暴露","设计并落地完整 RAG Pipeline","服务设备运维、备件管理、生产制造与市场","压测容量 40+ 并发","MES、SAP、工单、邮件等系统接口封装为标准工具","3 年"]},{"name":"王浩","phone":"13700713459","email":"13700713459@163.com","years":4,"education":"软件工程（本科）","latest_role":"AI应用工程师","status":"recommended","score":90.0,"filename":"【资深软件开发工程师_上海 11-18K】王浩 4年 (1).pdf","comment":"Java 与 Python 双栈架构、RAG 多智能体与高并发治理均有量化成果，工程完整度最高；简历未提及制造业场景。","highlights":["Python 智能体服务与 Java 业务微服务混合架构由本人主导。","多个 AI 项目已上线，结构化输出合格率提升至 94% 以上。"],"risks":["项目集中在旅行、健康、教育与分销，简历未提及制造业。"],"gaps":["简历未提及设备数据采集、排产与工业机理模型对接。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":100,"note":"Java 微服务与 Python AI 服务双栈从 0 到 1 落地，含分库分表与分布式事务。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"多智能体编排、混合检索 RAG 与微调闭环均有上线项目，结构化输出合格率 94% 以上。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":50,"note":"有多业务域 AI 落地与电商供应链数据建模，简历未提及制造业设备维护或排产。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":100,"note":"Redis 多级缓存、MQ 削峰、Sentinel 限流、慢 SQL 治理与 Docker 部署齐备。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":100,"note":"批发分销与订单履约、结算对账等企业内部系统有完整交付。"}],"evidence":["软件工程（本科）","4年经验","AI应用工程师","Java + Python 混合架构落地能力","基于 LangGraph 搭建多智能体协同工作流","累计落地旅行、健康、教育、批发分销四大领域 AI 应用","负责高并发链路优化与线上稳定性建设","拆分为商品、店铺、分销、库存微服务"]},{"name":"王浩","phone":"13700713459","email":"13700713459@163.com","years":4,"education":"软件工程（本科）","latest_role":"AI应用工程师","status":"recommended","score":90.0,"filename":"【资深软件开发工程师_上海 11-18K】王浩 4年.pdf","comment":"与另一份同名文件内容完全一致，属同一份简历的重复副本；双栈架构、RAG 多智能体与高并发治理成果一致，简历未提及制造业场景。","highlights":["Java 微服务与 Python AI 服务混合架构由本人主导。","RAG 混合检索与多 Agent 项目均已上线。"],"risks":["原件与另一份同名文件哈希一致，请 HR 确认是否重复投递。","简历未提及制造业设备维护、排产或数据采集。"],"gaps":["简历未提及工业机理模型与设备数据对接。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":100,"note":"Java 微服务与 Python AI 服务双栈从 0 到 1 落地，含分库分表与分布式事务。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"多智能体编排、混合检索 RAG 与微调闭环均有上线项目，结构化输出合格率 94% 以上。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":50,"note":"有多业务域 AI 落地与电商供应链数据建模，简历未提及制造业设备维护或排产。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":100,"note":"Redis 多级缓存、MQ 削峰、Sentinel 限流、慢 SQL 治理与 Docker 部署齐备。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":100,"note":"批发分销与订单履约、结算对账等企业内部系统有完整交付。"}],"evidence":["软件工程（本科）","4年经验","AI应用工程师","Java + Python 混合架构落地能力","基于 LangGraph 搭建多智能体协同工作流","累计落地旅行、健康、教育、批发分销四大领域 AI 应用","负责高并发链路优化与线上稳定性建设","拆分为商品、店铺、分销、库存微服务"]},{"name":"姚志博","phone":"18272861727","email":"19919400109@163.com","years":3,"education":"本科（一本）","latest_role":"大模型开发工程师","status":"recommended","score":85.0,"filename":"【资深软件开发工程师_上海 11-18K】姚先生 3年.pdf","comment":"独立完成 RAG 全链路、多 Agent 编排与异步后端服务，且有召回率与并发压测的量化结果；制造业场景简历未提及。","highlights":["RAG 项目给出 RAGAS 评估与召回率 93% 提升至 95% 的数据。","FastAPI 全异步服务 20 并发压测接口成功率 99%。"],"risks":["工作场景集中在电商，简历未提及制造业设备维护、排产或数据采集。"],"gaps":["简历未提及 Java/Golang 与工业机理模型对接的落地成果。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":75,"note":"本人设计开发 FastAPI 全异步后端与连接池，独立完成服务层。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"RAG 混合召回、精排与多 Agent 编排均有上线项目，召回率由 93% 提升至 95%。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":50,"note":"有文档解析、切片与元数据构建的数据治理实践，简历未提及制造业设备维护或排产。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":100,"note":"Docker、MySQL/MongoDB、异步 SSE 与 20 并发压测接口成功率 99%。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":100,"note":"为企业内部运营搭建问数平台并对接电商中台，SQL 一次可执行率 92% 以上。"}],"evidence":["学历：本科（一本）","姚志博| AI 大模型应用工程师| 3 年","目标职能：大模型算法工程师、大模型应用开发工程师","搭建FastAPI 全异步后端服务","深入理解RAG 应用开发全流程","建设知识库导入链路","实现高并发下的全链路日志追踪","构建了企业级Text2SQL 智能问数系统"]},{"name":"闫昭春","phone":"15561649629","email":"15561649629@163.com","years":3,"education":"本科","latest_role":"AI 大模型开发工程师","status":"recommended","score":82.5,"filename":"【资深软件开发工程师_上海 11-18K】闫昭春 3年.pdf","comment":"RAG 知识库与多 Agent 风险研判均有量化评测，企业内部系统集成和化工物流文档治理扎实；简历未提及制造业设备与排产。","highlights":["RAG 项目召回率 93%、精确率 82.3%、忠诚率 94.5%，并要求给出数据来源。","约 4300 份化工、仓储与运输文档接入统一知识检索体系。"],"risks":["业务在化工物流供应链，简历未提及制造业设备维护或排产。"],"gaps":["简历未提及 Celery 类异步队列与高并发压测指标。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":75,"note":"FastAPI 后端链路与异步任务、SSE 由本人开发，无大型后端架构主导记录。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"RAG 知识库给出召回率 93%、精确率 82.3%、忠诚率 94.5%，多 Agent 研判系统另有评测集。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":75,"note":"化工物流与仓储文档规模化治理，简历未提及设备维护或排产场景。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":75,"note":"Docker 容器化、PostgreSQL/MongoDB/Milvus 与线上监控调优齐备，未写高并发压测指标。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":75,"note":"重构企业知识库并对接原 FAQ、订单与物流查询等内部业务系统。"}],"evidence":["本科","闫昭春_AI 大模型开发工程师_3 年","期望职能：AI 大模型开发工程师","负责智能客服后端核心对话链路开发","基于Ragas 建立RAG 评估流程，项目召回率93%","完成约4300 份多格式业务文档接入","主导大模型从研发到生产环境的全流程部署","对于公司的业务场景，对公司原有知识库系统进行重构"]},{"name":"陈海","phone":"13270111504","email":"15003973063@163.com","years":4,"education":"计算机科学与技术","latest_role":"大模型算法工程师","status":"recommended","score":82.5,"filename":"【资深软件开发工程师_上海 11-18K】陈海 4年.pdf","comment":"RAG 检索有量化评测，数据采集治理与企业系统对接经验完整；求职意向写大模型算法，与软件开发岗的匹配需面试核实。","highlights":["双路混合检索与二阶段精排实测来源命中率 100%、MRR 0.784。","搭建多源采集、规则清洗到指标输出的标准化数据管线。"],"risks":["求职意向为大模型算法，简历未提及是否接受软件开发与业务沟通职责。","工作以算法与数据分析为主，简历未提及制造业场景。"],"gaps":["简历未提及 Docker 容器化与高并发压测的具体指标。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":75,"note":"FastAPI 异步服务、asyncio 与 SQLAlchemy ORM 建模有落地，偏 AI 应用侧。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"RAG 全链路、双路混合检索与多 Agent 编排均有项目，来源命中率 100%、MRR 0.784。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":75,"note":"有多源数据采集、清洗与质量校验平台，简历未提及制造业设备维护或排产。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":75,"note":"MySQL/PostgreSQL/Redis/Milvus 与 vLLM 并发推理、全链路可观测齐备，未写 Docker 高并发压测。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":75,"note":"数据采集平台对接多类内外部系统，另有工单辅助平台与 MCP 工具封装。"}],"evidence":["本科","4年工作经验","大模型算法工程师","具备 FastAPI 异步服务开发","构建双路混合检索与二阶段精排","面向多品类业务数据的采集与治理场景","具备 SQL 编写与索引优化能力","对接电商平台、社交媒体、内部业务系统等数据源"]},{"name":"曹莹莹","phone":"186-1496-6212","email":"cyy1416794053@qq.com","years":3,"education":"本科","latest_role":"Python 全栈开发工程师","status":"recommended","score":75.0,"filename":"【资深软件开发工程师_上海 11-18K】曹莹莹 3年.pdf","comment":"Python 后端与 AI 应用双线经验，RAG 知识库和异步工程链路完整；缺量化检索指标，且简历未提及制造业场景。","highlights":["知识库混合检索与文档生命周期治理有具体工程方案。","限流、幂等、异步任务与多机构隔离覆盖接口安全与高并发。"],"risks":["RAG 效果仅写降低幻觉，简历未提及召回率或评测数据。"],"gaps":["简历未提及制造业设备维护、排产与数据采集项目。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":75,"note":"FastAPI 后端、幂等重试与索引优化均独立完成，无架构主导记录。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":75,"note":"基于 FastAPI+LangGraph 落地 Agent 对话链路与混合检索知识库，未给出检索指标。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":50,"note":"有文档分片、双索引与冷热数据治理实践，简历未提及制造业场景。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":100,"note":"Docker、MySQL/Redis、Celery/RabbitMQ、JWT/RBAC 与限流幂等齐备。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":75,"note":"保险三端平台与内部工单系统有多机构数据隔离与报表对接。"}],"evidence":["本科| 26 岁| 3 年开发经验","Python 后端开发工程师","求职方向：Python 后端开发/ AI 应用开发","参与内部工单系统后端开发","具备RAG 知识库、多轮对话系统开发经验","知识库治理：MySQL 状态机管控文档生命周期","会话限流、上下文滑动窗口、异步任务管控方案","负责保险AI 三端平台","3 年开发经验"]},{"name":"温伊哲","phone":"15132003272","email":"","years":null,"education":"计算机科学与技术| 本科","latest_role":"AI 开发工程师","status":"pending","score":72.5,"filename":"【资深软件开发工程师_上海 11-18K】温伊哲 4年.pdf","comment":"RAG 与 Agent 工作流有明确量化成果，但后端服务多由团队协作完成，简历未提及制造业与容器化实践，综合未达推荐线。","highlights":["RAG 检索与多 Agent 并行编排落地，查询耗时由 10-15 分钟降至 5-10 秒。","MCP 中间件屏蔽 SQL 细节，实现多业务域安全调用。"],"risks":["偏算法与 AI 模块，简历未提及独立承担后端架构与部署。"],"gaps":["简历未提及 Docker 容器化、制造业场景与总工作年限明示数字。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":50,"note":"后端服务由团队协作完成，本人主责 Agent 与 RAG 模块，未见独立后端交付。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":100,"note":"公安知识库 RAG 与三层 Agent 工作流均落地，跨域查询由 10-15 分钟降至 5-10 秒。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":50,"note":"有警情数据抽取与标签数据集构建，简历未提及制造业设备维护或排产。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":75,"note":"Redis/MySQL 索引、asyncio 并行与熔断降级有落地，未写容器化与压测指标。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":75,"note":"将多业务域数据封装为标准工具并对接实施部署需求，业务系统集成有实践。"}],"evidence":["计算机科学与技术| 本科","2022.07-2026.10","AI 开发工程师","与后端团队协作设计模型服务化架构","负责RAG 系统核心模块开发","从mysql 数据库中抽取历史警情数据","结合Redis 缓存大幅降低高频问题响应时间","基于MCP 协议开发中间件"]},{"name":"尹浩男","phone":"15610575095","email":"bincorebit@gmail.com","years":null,"education":"本科 • 学信网可查 双证齐全","latest_role":"后端软件开发工程师","status":"pending","score":47.5,"filename":"【资深软件开发工程师_上海 11-18K】尹浩男 4年.pdf","comment":"四年后端与网络安全开发，工程部署和并发调优扎实；RAG 仅列探索方向，简历未提及落地项目，需核实能否独立承接 RAG 链路。","highlights":["长期负责防火墙核心代码与线上崩溃问题排查。","有内网大模型调用平台与 vLLM 压测、负载均衡经验。"],"risks":["RAG 与 Agent 停留在探索阶段，简历未提及上线项目。"],"gaps":["简历未提及总工作年限的明示数字、制造业与企业知识库经验。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":75,"note":"四年防火墙与 VPN 核心 C/Go 代码开发，另有 Java 后端经历。"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":25,"note":"RAG 与微调只列为探索方向，简历未提及已上线的 RAG 或 Agent 项目。"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":25,"note":"做过协议流量采集与还原，简历未提及制造业或企业数据治理项目。"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":75,"note":"Docker/K8s、Redis、CI/CD 与模型服务多人并发调优有实操。"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":50,"note":"有 SSO 与 DevOps 平台对接经历，简历未提及企业知识库或业务系统 AI 集成。"}],"evidence":["本科 • 学信网可查 双证齐全","后端软件开发工程师","Java 开发工程师","负责核心代码实现以及版本迭代","探索模型微调、检索增强生成（RAG）和代码补全等功能","镜像并分析远程访问协议流量","有vllm调优 压测，多人并发优化的","熟悉常见的keycloak等sso 平台"]},{"name":"简历未提及","phone":"","email":"","years":null,"education":"简历未提及","latest_role":"简历未提及","status":"pending","score":0,"filename":"【资深软件开发工程师_上海 11-18K】权太磊 3年.pdf","comment":"该 PDF 只提取到水印字符，简历未提及学历、年限与项目经历，无法评分，请人工打开原件或索要可选中文字版本。","highlights":[],"risks":["可提取文本仅含水印，简历未提及任何可举证事实，不得据此淘汰。"],"gaps":["简历未提及任何可核实信息，需人工查看原文件后重判。"],"dimensions":[{"name":"Python/Java 后端开发、架构设计与性能优化（职责1、要求1、技能标签）","score":0,"note":"解析文本仅含水印，简历未提及任何后端开发经历。（此项未计分）"},{"name":"RAG 链路优化、Agent 编排、大模型应用落地、企业知识库与智能体（职责2、4，要求4，加分1）","score":0,"note":"解析文本仅含水印，简历未提及 RAG 或 Agent 经历。（此项未计分）"},{"name":"制造业场景（设备维护、排产、数据采集）与数据治理经验（要求4、加分3）","score":0,"note":"解析文本仅含水印，简历未提及制造业或数据治理经历。（此项未计分）"},{"name":"工程能力：Docker 容器化、数据库建模、高并发/异步处理、接口安全与性能优化（要求3）","score":0,"note":"解析文本仅含水印，简历未提及工程能力相关经历。（此项未计分）"},{"name":"数据处理、企业系统开发、接口集成（CRM/飞书/内部系统/数据采集）（职责3、要求2、加分2）","score":0,"note":"解析文本仅含水印，简历未提及企业系统或接口集成经历。（此项未计分）"}],"evidence":[]}],"abnormal_files":[]};
+
+function esc(str) {
+  if (str == null) return '';
+  const el = document.createElement('span');
+  el.textContent = String(str);
+  return el.innerHTML;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  btn.classList.add('copied');
+  const lbl = btn.querySelector('.copy-label');
+  if (lbl) lbl.textContent = '已复制';
+  showToast('联系方式已复制到剪贴板');
+  setTimeout(() => {
+    btn.classList.remove('copied');
+    if (lbl) lbl.textContent = '复制联系方式';
+  }, 1500);
+}
+
+function countByStatus(candidates, status) {
+  return candidates.filter(c => c.status === status).length;
+}
+
+function badgeClass(status) {
+  return { recommended: 'badge-recommended', pending: 'badge-pending', rejected: 'badge-rejected' }[status] || '';
+}
+function badgeLabel(status) {
+  return { recommended: '强烈推荐', pending: '待定复核', rejected: '暂不匹配' }[status] || '';
+}
+function scoreClass(status) {
+  return { recommended: 'score-green', pending: 'score-amber', rejected: 'score-gray' }[status] || '';
+}
+function dimBarColor(score) {
+  if (score >= 85) return 'var(--accent-green)';
+  if (score >= 65) return 'var(--accent-amber)';
+  return 'var(--accent-gray)';
+}
+
+const ICONS = {
+  print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+  sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  gap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 9l6 6M15 9l-6 6"/></svg>'
+};
+
+const D = REPORT_DATA;
+let activeTab = 'all';
+let searchQuery = '';
+let sortBy = 'score';
+let selectedFilename = D.candidates[0] ? D.candidates[0].filename : null;
+let criteriaOpen = false;
+
+function getFilteredCandidates() {
+  let list = [...D.candidates];
+  if (activeTab === 'recommended') list = list.filter(c => c.status === 'recommended');
+  else if (activeTab === 'pending') list = list.filter(c => c.status === 'pending');
+  else if (activeTab === 'rejected') list = list.filter(c => c.status === 'rejected');
+  else if (activeTab === 'abnormal') return [];
+
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    list = list.filter(c => {
+      const haystack = [
+        c.name, c.filename, c.phone, c.email, c.education, c.latest_role, c.comment,
+        ...(c.highlights || []), ...(c.risks || []), ...(c.gaps || []),
+        ...(c.dimensions || []).map(d => d.name + ' ' + d.note),
+        ...(c.evidence || [])
+      ].join(' ').toLowerCase();
+      return haystack.includes(q);
+    });
+  }
+
+  if (sortBy === 'years') {
+    list.sort((a, b) => (b.years ?? -1) - (a.years ?? -1));
+  } else {
+    list.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+  }
+  return list;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const nRec = countByStatus(D.candidates, 'recommended');
+  const nPen = countByStatus(D.candidates, 'pending');
+  const nRej = countByStatus(D.candidates, 'rejected');
+  const nAbn = D.abnormal_files.length;
+  const total = D.meta.total_files_scanned;
+  const valid = D.meta.valid_parsed;
+
+  const filtered = getFilteredCandidates();
+  if (filtered.length > 0 && !filtered.some(c => c.filename === selectedFilename)) {
+    selectedFilename = filtered[0].filename;
+  }
+
+  const selectedCandidate = filtered.find(c => c.filename === selectedFilename) || filtered[0] || null;
+
+  app.innerHTML = `
+    <header class="glass-panel topbar">
+      <div class="topbar-head">
+        <div class="topbar-title-group">
+          <div class="eyebrow">TAI REN · TALENT REVIEW WORKBENCH</div>
+          <h1 class="report-title">${esc(D.meta.job_title)}</h1>
+          <div class="report-meta">
+            <span>筛选时间：${esc(D.meta.screening_time)}</span>
+            <span class="dot-sep">·</span>
+            <span>扫描 <b>${total}</b> 份</span>
+            <span class="dot-sep">·</span>
+            <span>有效 <b>${valid}</b> 份</span>
+            ${D.meta.source_summary ? `<span class="dot-sep">·</span><span>${esc(D.meta.source_summary)}</span>` : ''}
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="action-btn ${criteriaOpen ? 'active' : ''}" onclick="toggleCriteria()">
+            ${ICONS.sliders}
+            <span>筛选口径</span>
+          </button>
+          <button class="action-btn" onclick="window.print()">
+            ${ICONS.print}
+            <span>导出 PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="criteria-drawer ${criteriaOpen ? 'open' : ''}" id="criteriaDrawer">
+        <div class="criteria-grid">
+          <div class="criteria-col">
+            <div class="criteria-col-title">硬门槛（一票否决）</div>
+            <ul class="criteria-list">
+              ${D.criteria.hard_requirements.map(r => `<li>${esc(r)}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="criteria-col">
+            <div class="criteria-col-title">HR 补充隐性口径</div>
+            <ul class="criteria-list">
+              ${D.criteria.hidden_requirements.map(r => `<li>${esc(r)}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="criteria-col">
+            <div class="criteria-col-title">核心评估维度与权重</div>
+            <ul class="criteria-weights">
+              ${D.criteria.dimensions.map(d => `
+                <li><span>${esc(d.name)}</span><span class="weight-pill">${d.weight}%</span></li>
+              `).join('')}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-controls">
+        <div class="filter-tabs">
+          ${renderTabBtn('all', '全部', valid + nAbn)}
+          ${renderTabBtn('recommended', '强烈推荐', nRec)}
+          ${renderTabBtn('pending', '待定复核', nPen)}
+          ${renderTabBtn('rejected', '暂不匹配', nRej)}
+          ${renderTabBtn('abnormal', '异常文件', nAbn)}
+        </div>
+        <div class="control-right">
+          <div class="search-wrap">
+            ${ICONS.search}
+            <input type="text" placeholder="搜索姓名、文件名、技能、原文…" value="${esc(searchQuery).replaceAll('"', '&quot;')}" oninput="onSearch(this.value)">
+          </div>
+          <div class="sort-dropdown" id="sortDropdown">
+            <button type="button" class="sort-trigger" onclick="toggleSortMenu(event)">
+              <span id="sortLabel">${sortBy === 'years' ? '按工作年限排序' : '按匹配度排序'}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="sort-menu">
+              <button type="button" class="sort-option ${sortBy === 'score' ? 'active' : ''}" onclick="selectSort('score')">
+                <span>按匹配度排序</span>
+                ${sortBy === 'score' ? ICONS.check : ''}
+              </button>
+              <button type="button" class="sort-option ${sortBy === 'years' ? 'active' : ''}" onclick="selectSort('years')">
+                <span>按工作年限排序</span>
+                ${sortBy === 'years' ? ICONS.check : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    ${activeTab === 'abnormal' ? renderAbnormalView() : `
+    <main class="workspace">
+      <aside class="glass-panel list-pane">
+        <div class="pane-scroll" id="listPane">${renderCandidateList(filtered)}</div>
+      </aside>
+      <section class="glass-panel detail-pane">
+        <div class="pane-scroll" id="detailPane">${renderCandidateDetail(selectedCandidate, filtered)}</div>
+      </section>
+    </main>
+    `}
+  `;
+}
+
+function renderTabBtn(id, label, count) {
+  return `<button class="filter-tab ${activeTab === id ? 'active' : ''}" onclick="switchTab('${id}')">
+    <span>${esc(label)}</span>
+    <span class="tab-badge">${count}</span>
+  </button>`;
+}
+
+function renderCandidateList(list) {
+  if (list.length === 0) {
+    return '';
+  }
+  return `<div class="cand-list">${list.map((c, idx) => {
+    const isActive = c.filename === selectedFilename;
+    return `
+      <div class="cand-item ${isActive ? 'active' : ''}" onclick="selectCandidate('${esc(c.filename).replaceAll("'", "\\'")}')">
+        <div class="cand-item-top">
+          <div class="cand-item-left">
+            <span class="cand-rank">#${String(idx + 1).padStart(2, '0')}</span>
+            <span class="cand-name">${esc(c.name)}</span>
+            <span class="status-pill ${badgeClass(c.status)}">${badgeLabel(c.status)}</span>
+          </div>
+          <div class="cand-score ${scoreClass(c.status)}">${c.score ?? '—'}</div>
+        </div>
+        <div class="cand-item-meta">
+          <span>${c.years == null ? '年限未提及' : c.years + ' 年'}</span>
+          <span>·</span>
+          <span>${esc(c.education)}</span>
+          <span>·</span>
+          <span>${esc(c.latest_role)}</span>
+        </div>
+        <div class="cand-item-snippet">${esc(c.comment)}</div>
+      </div>
+    `;
+  }).join('')}</div>`;
+}
+
+function renderCandidateDetail(c, list) {
+  if (!c) {
+    return '';
+  }
+  const rank = list.findIndex(item => item.filename === c.filename) + 1;
+  const contactText = [c.phone, c.email].filter(Boolean).join(' / ');
+
+  return `
+    <div class="detail-inner">
+      <div class="detail-header">
+        <div class="detail-title-block">
+          <div class="detail-kicker">
+            <span class="detail-rank">RANK #${String(rank).padStart(2, '0')}</span>
+            <span class="status-pill ${badgeClass(c.status)}">${badgeLabel(c.status)}</span>
+          </div>
+          <h2 class="detail-name">${esc(c.name)}</h2>
+          <div class="detail-basics">
+            <span>${c.years == null ? '工作年限未提及' : c.years + ' 年工作经验'}</span>
+            <span class="dot-sep">·</span>
+            <span>${esc(c.education)}</span>
+            <span class="dot-sep">·</span>
+            <span>${esc(c.latest_role)}</span>
+          </div>
+        </div>
+        <div class="detail-score-box ${scoreClass(c.status)}">
+          <div class="score-num">${c.score ?? '—'}</div>
+          <div class="score-label">综合匹配分</div>
+        </div>
+      </div>
+
+      <div class="detail-meta-bar">
+        <div class="file-chip">${ICONS.file}<span>${esc(c.filename)}</span></div>
+        ${contactText ? `
+          <div class="contact-actions">
+            <span class="contact-text">${esc(contactText)}</span>
+            <button class="copy-btn" data-contact="${esc(contactText).replaceAll('"', '&quot;')}" onclick="copyText(this.dataset.contact, this)">
+              ${ICONS.copy}<span class="copy-label">复制联系方式</span>
+            </button>
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="detail-summary-card">
+        <div class="section-heading">AI 综合评估结论</div>
+        <p class="summary-text">${esc(c.comment)}</p>
+      </div>
+
+      <div class="insights-grid">
+        ${(c.highlights && c.highlights.length) ? `
+          <div class="insight-box insight-green">
+            <div class="insight-title">${ICONS.check}<span>核心亮点</span></div>
+            <ul>${c.highlights.map(h => `<li>${esc(h)}</li>`).join('')}</ul>
+          </div>
+        ` : ''}
+        ${(c.risks && c.risks.length) ? `
+          <div class="insight-box insight-amber">
+            <div class="insight-title">${ICONS.alert}<span>潜在风险</span></div>
+            <ul>${c.risks.map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+          </div>
+        ` : ''}
+        ${(c.gaps && c.gaps.length) ? `
+          <div class="insight-box insight-gray">
+            <div class="insight-title">${ICONS.gap}<span>待核实缺口</span></div>
+            <ul>${c.gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="detail-section">
+        <div class="section-heading">五维能力拆解</div>
+        <div class="dim-list">
+          ${(c.dimensions || []).map(d => `
+            <div class="dim-card">
+              <div class="dim-card-top">
+                <span class="dim-name">${esc(d.name)}</span>
+                <span class="dim-score-pill">${d.score} 分</span>
+              </div>
+              <div class="dim-bar-track">
+                <div class="dim-bar-fill" style="width:${d.score}%; background:${dimBarColor(d.score)}"></div>
+              </div>
+              <p class="dim-note-text">${esc(d.note)}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      ${(c.evidence && c.evidence.length) ? `
+        <div class="detail-section">
+          <div class="section-heading">简历原文事实依据</div>
+          <div class="evidence-grid">
+            ${c.evidence.map(e => `<div class="evidence-chip">${esc(e)}</div>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderAbnormalView() {
+  if (D.abnormal_files.length === 0) {
+    return `<div class="glass-panel empty-panel" style="flex:1;min-height:360px;"></div>`;
+  }
+  return `<div class="glass-panel abnormal-panel">${D.abnormal_files.map(f => `
+    <div class="abnormal-row">
+      <div class="abnormal-icon">${ICONS.alert}</div>
+      <div>
+        <div class="abnormal-name">${esc(f.filename)} <span>${esc(f.file_type)}</span></div>
+        <div class="abnormal-reason">${esc(f.reason)}</div>
+        <div class="abnormal-action">${esc(f.suggestion)}</div>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  renderAndBind();
+  restoreSearchFocus();
+}
+
+function onSearch(val) {
+  searchQuery = val;
+  renderListAndDetail();
+}
+
+function onSort(val) {
+  sortBy = val;
+  renderListAndDetail();
+}
+
+function toggleSortMenu(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('sortDropdown');
+  if (dd) dd.classList.toggle('open');
+}
+
+function selectSort(val) {
+  sortBy = val;
+  const dd = document.getElementById('sortDropdown');
+  if (dd) dd.classList.remove('open');
+  renderAndBind();
+}
+
+if (!window._sortOutsideBound) {
+  window._sortOutsideBound = true;
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('sortDropdown');
+    if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+}
+
+function selectCandidate(filename) {
+  selectedFilename = filename;
+  renderListAndDetail();
+  const detailPane = document.getElementById('detailPane');
+  if (detailPane) detailPane.scrollTop = 0;
+}
+
+function toggleCriteria() {
+  criteriaOpen = !criteriaOpen;
+  const drawer = document.getElementById('criteriaDrawer');
+  const btn = document.querySelector('.topbar-actions .action-btn');
+  if (drawer) drawer.classList.toggle('open', criteriaOpen);
+  if (btn) btn.classList.toggle('active', criteriaOpen);
+}
+
+function renderListAndDetail() {
+  if (activeTab === 'abnormal') return;
+  const filtered = getFilteredCandidates();
+  if (filtered.length > 0 && !filtered.some(c => c.filename === selectedFilename)) {
+    selectedFilename = filtered[0].filename;
+  }
+  const selected = filtered.find(c => c.filename === selectedFilename) || filtered[0] || null;
+  const listPane = document.getElementById('listPane');
+  const detailPane = document.getElementById('detailPane');
+  if (listPane) listPane.innerHTML = renderCandidateList(filtered);
+  if (detailPane) detailPane.innerHTML = renderCandidateDetail(selected, filtered);
+}
+
+function restoreSearchFocus() {
+  if (!searchQuery) return;
+  const inp = document.querySelector('.search-wrap input');
+  if (inp) {
+    inp.focus();
+    inp.setSelectionRange(inp.value.length, inp.value.length);
+  }
+}
+
+let isCompact = false;
+let compactLockUntil = 0;
+
+function setCompact(next) {
+  if (next === isCompact) return;
+  const now = Date.now();
+  if (now < compactLockUntil) return;
+  compactLockUntil = now + 360;
+  isCompact = next;
+  const app = document.getElementById('app');
+  if (app) app.classList.toggle('is-compact', isCompact);
+}
+
+function bindScrollCompact() {
+  const listPane = document.getElementById('listPane');
+  const detailPane = document.getElementById('detailPane');
+  const attach = (el) => {
+    if (!el) return;
+    let lastTop = el.scrollTop;
+    el.addEventListener('scroll', () => {
+      const top = el.scrollTop;
+      const goingDown = top > lastTop;
+      const goingUp = top < lastTop;
+      lastTop = top;
+      if (goingDown && top > 24) {
+        setCompact(true);
+      } else if (goingUp && top <= 2) {
+        const other = el === listPane ? detailPane : listPane;
+        if (!other || other.scrollTop <= 2) setCompact(false);
+      }
+    }, { passive: true });
+  };
+  attach(listPane);
+  attach(detailPane);
+}
+
+if (!window._wheelCompactBound) {
+  window._wheelCompactBound = true;
+  window.addEventListener('wheel', (e) => {
+    if (window.innerWidth <= 1024) return;
+    if (e.deltaY > 6) {
+      setCompact(true);
+    } else if (e.deltaY < -6) {
+      const listPane = document.getElementById('listPane');
+      const detailPane = document.getElementById('detailPane');
+      const listAtTop = !listPane || listPane.scrollTop <= 4;
+      const detailAtTop = !detailPane || detailPane.scrollTop <= 4;
+      if (listAtTop && detailAtTop) setCompact(false);
+    }
+  }, { passive: true });
+}
+
+function renderAndBind() {
+  render();
+  const app = document.getElementById('app');
+  if (app && isCompact) app.classList.add('is-compact');
+  bindScrollCompact();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderAndBind);
+} else {
+  renderAndBind();
+}
+</script>
+
+</body>
+</html>
